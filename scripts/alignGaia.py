@@ -6,7 +6,6 @@ import astropy.units as u
 import glob
 import numpy as np
 import os
-import sys
 
 from astropy.io import fits
 from astropy.table import Table
@@ -121,10 +120,11 @@ def alignGaia(targname,filt,mainDir='../'):
                   imagefindcfg={'threshold':500.,'conv_width':cw},# Detection parameters, threshold varies for different data
                   separation=0.0, # Allow for very small shifts
                   refcat=cat, # Use user supplied catalog (Gaia)
-                  clean='Yes', # Get rid of intermediate files
+                  clean=True, # Get rid of intermediate files
                   interactive=False,
                   see2dplot=False,
-                  writecat='No',
+                  writecat=False,
+                  residplot='No plot',
                   #shiftfile=False, # Save out shift file (so we can look at shifts later)
                   wcsname=wcsname, # Give our WCS a new name
                   reusename=True,
@@ -136,7 +136,10 @@ def alignGaia(targname,filt,mainDir='../'):
 
 
 if __name__=='__main__':
-    targname = input("Enter targname (ex. HOROLOGIUM I):")
+    targname = input("Enter targname (ex. HOROLOGIUM I): ")
     filt_arr = ['606','814']
     for ff in filt_arr:
         alignGaia(targname,ff,mainDir='../')
+    # os.remove('./residuals*.png')
+    # os.remove('./vector*.png')
+    
