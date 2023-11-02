@@ -1,5 +1,6 @@
 # Copied/adapted from Gaia_alignment.ipynb 
 # from gaia_alignment repository on spacetelescope github
+# https://github.com/spacetelescope/gaia_alignment/blob/master/Gaia_alignment.ipynb
 # needs to be run in the "driz" environment
 
 import astropy.units as u

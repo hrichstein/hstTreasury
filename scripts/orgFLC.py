@@ -4,7 +4,13 @@ from glob import glob
 from pathlib import Path
 import os
 
+# Should work if the files were downloaded with the curl commands
 filelist = glob('../data/MAST*/HST/*/*flc.fits',recursive=True)
+
+# Should work if the files were downloaded using the mastQuery ipynb
+if len(filelist) == 0:
+    filelist = glob('../data/mastDownload/HST/*/*flc.fits',recursive=True)
+    
 filt_arr = ['606','814']
 
 def mvFLCs(targname,mainDir='../'):
