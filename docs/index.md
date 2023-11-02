@@ -6,6 +6,9 @@ Run this file to download the MAST data set for Horologium I into the data direc
 
 To get other targets, go to MAST, select what you need, and copy the API script with the "curl" commands. Paste those in the terminal while in the data/ directory.
 
+### mastQuery.ipynb
+Alternatively, if you're not a fan of using curl/would like to do things without having to go to MAST directly, this Jupyter Notebook shows how to use astroquery.mast to get the relevant data. If you want other targets for this program, simply change the "tname."
+
 ## Scripts
 Order to run:
 1. orgFLC.py

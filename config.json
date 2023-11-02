@@ -1,0 +1,17 @@
+{
+"main" : {
+  "targname" : "HOROLOGIUM-I",
+  "filt1" : "606",
+  "filt2" : "814"
+},
+
+"aper" : {
+  "dataDir" : "../../data",
+  "resDir" : "../../results"
+},
+
+"script" : {
+  "dataDir" : "../data",
+  "resDir" : "../results"
+}
+}
