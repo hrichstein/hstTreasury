@@ -2,7 +2,10 @@
 "main" : {
   "targname" : "HOROLOGIUM-I",
   "filt1" : "606",
-  "filt2" : "814"
+  "filt2" : "814",
+  "mainEnv" : "treas",
+  "drizEnv" : "driz",
+  "sfdEnv" : "env_healpy"
 },
 
 "aper" : {
@@ -12,11 +15,13 @@
 
 "driz" : {
   "cfg" : "./refFiles/astrodrizzle_new08.cfg",
-  "scale" : 0.035
+  "scale" : 0.035,
+  "fpf" : 0.08
 },
 
 "script" : {
   "dataDir" : "../data",
-  "resDir" : "../results"
+  "resDir" : "../results",
+  "qualDir" : "../results/qualFigs"
 }
 }
