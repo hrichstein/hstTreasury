@@ -3,14 +3,18 @@
 # https://github.com/spacetelescope/gaia_alignment/blob/master/Gaia_alignment.ipynb
 # needs to be run in the "driz" environment
 
-import astropy.units as u
+import argparse as ap
 import glob
-import numpy as np
 import os
+
+import numpy as np
+import pandas as pd
 
 from astropy.io import fits
 from astropy.table import Table
+import astropy.units as u
 from astropy.units import Quantity
+
 from astropy.coordinates import SkyCoord
 from astroquery.gaia import Gaia
 from astropy.wcs import WCS
@@ -73,9 +77,16 @@ def get_error_mask(catalog, max_error):
 
 # ----------------------------------------------------------------------------------------------------------
 
-def alignGaia(targname,filt,mainDir='../'):
+def main(args):
 
-    tDir = os.path.join(mainDir,'data',f'{targname}_f{filt}w')
+    config = pd.read_json(args.config)
+    filt = args.filter
+
+    targname = config.main.targname
+    dataDir = config.script.dataDir
+    resDir = config.script.resDir
+
+    tDir = os.path.join(dataDir,f'{targname}_f{filt}w')
 
     str_in = os.path.join(tDir,'*fl?.fits')
     images = glob.glob(str_in)
@@ -135,12 +146,27 @@ def alignGaia(targname,filt,mainDir='../'):
 
     return None
 
-
-if __name__=='__main__':
-    targname = input("Enter targname (ex. HOROLOGIUM I): ")
-    filt_arr = ['606','814']
-    for ff in filt_arr:
-        alignGaia(targname,ff,mainDir='../')
-    # os.remove('./residuals*.png')
-    # os.remove('./vector*.png')
     
+if __name__ == '__main__':
+    parser = ap.ArgumentParser(
+        description='Improves (?) the WCS on the FLCs'
+    )
+    _ = parser.add_argument(
+        '-c',
+        '--config',
+        help='Name of the config json file.\
+                              (Default: config.json)',
+        default='../config.json',
+        type=str,
+    )
+
+    _ = parser.add_argument(
+        '-f',
+        '--filter',
+        help='String integer of filter (e.g., \'606\' for F606W)',
+        default = '606',
+        type=str,
+)
+    args = parser.parse_args()
+
+    df = main(args)

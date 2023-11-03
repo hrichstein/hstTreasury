@@ -10,6 +10,11 @@
   "resDir" : "../../results"
 },
 
+"driz" : {
+  "cfg" : "./refFiles/astrodrizzle_new08.cfg",
+  "scale" : 0.035
+},
+
 "script" : {
   "dataDir" : "../data",
   "resDir" : "../results"

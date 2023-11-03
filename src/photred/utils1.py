@@ -8,7 +8,7 @@ from glob import glob
 from astropy.io import fits
 from astropy.time import TimeDatetime
 from astropy.wcs import WCS
-from dlnpyutils import utils as dln
+from src.dlnpyutils import utils as dln
 from itertools import zip_longest
 from itertools import accumulate
 from io import StringIO

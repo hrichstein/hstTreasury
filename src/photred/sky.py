@@ -1,9 +1,13 @@
 #!/usr/bin/env python
 # import sys
 # sys.path.append('.')
+import sys
+sys.path.insert(0,'./')
+sys.path.insert(0,'../')
+sys.path.insert(0,'../../')
 
 import numpy as np
-import utils1 as utils
+from src.photred import utils1 as utils
 
 
 def getsky(image,silent=False,circlerad=False,meanback=False,highbad=None,

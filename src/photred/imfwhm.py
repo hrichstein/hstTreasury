@@ -5,11 +5,11 @@ import numpy as np
 from astropy.io import fits
 from astropy.convolution import convolve
 from astropy.table import Table
-from dlnpyutils import utils as dln
+from src.dlnpyutils import utils as dln
 from scipy.optimize import curve_fit
 from skimage import measure 
-import sky
-import io2 as io
+from src.photred import sky
+from src.photred import io2 as io
  
 def get_subim(im,xind,yind,hwidth,sky=0.0):
      

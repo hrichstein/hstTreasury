@@ -16,11 +16,11 @@ from astropy.wcs import WCS
 from astropy.time import Time
 from astropy.utils.exceptions import AstropyWarning
 import warnings
-from dlnpyutils import utils as dln
+from src.dlnpyutils import utils as dln
 from itertools import zip_longest
 from itertools import accumulate
 # import utils1 as utils
-from photred import utils1 as utils
+from src.photred import utils1 as utils
 
 # Ignore these warnings
 warnings.simplefilter('ignore', category=AstropyWarning)
