@@ -49,15 +49,20 @@ def main(args):
     #     shell=True, 
     #     cwd='./aperPhotCodes/'
     # )
+    # sp.run(
+    #     'python runPhotUtils.py',
+    #     shell=True, 
+    #     cwd='./aperPhotCodes/'
+    # )
     sp.run(
-        'python runPhotUtils.py',
+        'python getDRCfiltRef.py',
         shell=True, 
         cwd='./aperPhotCodes/'
     )
     
     
 if __name__ == '__main__':
-    parser = ap.ArgumentParser(description='Run HubPUG.')
+    parser = ap.ArgumentParser(description='Run hstTreasury Pipeline.')
     _ = parser.add_argument(
         '-c',
         '--config',

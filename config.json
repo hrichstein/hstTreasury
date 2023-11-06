@@ -15,7 +15,10 @@
   "ee814" : 0.830,
   "param" : "zeropoints.dat",
   "fwhm" : 3.5,
-  "aperrad" : 0.2
+  "aperrad" : 0.2,
+  "drctol" : 0.5,
+  "suffix" : ".dat",
+  "slice" : 500
 },
 
 "driz" : {

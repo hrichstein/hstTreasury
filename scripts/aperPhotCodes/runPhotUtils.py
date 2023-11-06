@@ -16,7 +16,7 @@ warnings.filterwarnings('ignore',category=RuntimeWarning)
 def runPhotUtils(targname,filt,zpt,sky,eeBand,resDir,
                  fwhm=3.5,aperture=0.2,scale=0.035,native=0.05):
     today = date.today()
-    cDate = today.strftime("%d%b")
+    cDate = today.strftime("%d%b%y")
     photDir = os.path.join(resDir,f'drcPhot{cDate}')
     if not os.path.exists(photDir):
         print(f'Creating {photDir}')
@@ -138,7 +138,7 @@ def runPhotUtils(targname,filt,zpt,sky,eeBand,resDir,
     form_dict['id'] = '%d'
     form_dict['six_4_flag'] = '%d'
     
-    ascii.write(rawflux_pos_rad,os.path.join(resDir,f'{targname}_aper{filt}.dat'),
+    ascii.write(rawflux_pos_rad,os.path.join(photDir,f'{targname}_aper{filt}.dat'),
                 format='commented_header',formats=form_dict,overwrite=True)
 
     return None

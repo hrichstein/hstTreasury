@@ -3,5 +3,5 @@ from setuptools import find_packages, setup
 setup(
     name='src',
     packages=find_packages(),
-    include=['dlnpyutils','photred']
+    include=['dlnpyutils','photred','matchlistUNQ']
 )

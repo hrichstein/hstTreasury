@@ -145,6 +145,7 @@ cython_debug/
 *.fits
 *.cat
 *.dat
+*.png
 
 *_.*
 *._*

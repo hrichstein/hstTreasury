@@ -57,10 +57,9 @@ def main(args):
         f'{config.main.filt2}'
         ]
     
+    resDir = os.path.join(config.aper.resDir,targname)
     for ff in filt_arr:
         dataDir = os.path.join(config.aper.dataDir,f'{targname}_f{ff}w')
-        resDir = os.path.join(config.aper.resDir,targname)
-        
         outZPTsky(targname,ff,dataDir,resDir)
 
     return None
