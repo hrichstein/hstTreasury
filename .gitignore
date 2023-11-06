@@ -144,6 +144,7 @@ cython_debug/
 *.pdf
 *.fits
 *.cat
+*.dat
 
 *_.*
 *._*

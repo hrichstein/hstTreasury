@@ -10,13 +10,19 @@
 
 "aper" : {
   "dataDir" : "../../data",
-  "resDir" : "../../results"
+  "resDir" : "../../results",
+  "ee606" : 0.839,
+  "ee814" : 0.830,
+  "param" : "zeropoints.dat",
+  "fwhm" : 3.5,
+  "aperrad" : 0.2
 },
 
 "driz" : {
   "cfg" : "./refFiles/astrodrizzle_new08.cfg",
   "scale" : 0.035,
-  "fpf" : 0.08
+  "fpf" : 0.08,
+  "native" : 0.05
 },
 
 "script" : {

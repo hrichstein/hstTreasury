@@ -5,7 +5,7 @@ import pandas as pd
 
 def switch_conda_environment(env_name):
     sp.run(
-        f"conda activate {env_name}",
+        f"source activate {env_name}",
         shell=True
     )
     print(f"Switched to conda environment: {env_name}")
@@ -19,33 +19,53 @@ def main(args):
     # sfdEnv = config.main.sfdEnv
     
     switch_conda_environment(mainEnv)
+    # sp.run(
+    #     'python getObs.py',
+    #     shell=True
+    # )
+    # sp.run(
+    #     'python moveFLCs.py',
+    #     shell=True
+    # )
+    
+    # switch_conda_environment(drizEnv)
+    # sp.run(
+    #     'python alignGaia.py',
+    #     shell=True
+    # )
+    # sp.run(
+    #     'python drizIt.py',
+    #     shell=True
+    # )
+    
+    # switch_conda_environment(mainEnv)
+    # sp.run(
+    #     'python maskACS.py',
+    #     shell=True
+    # )
+    
+    # sp.run(
+    #     'python getZPTsky.py',
+    #     shell=True, 
+    #     cwd='./aperPhotCodes/'
+    # )
     sp.run(
-        'python getObs.py',
-        shell=True
+        'python runPhotUtils.py',
+        shell=True, 
+        cwd='./aperPhotCodes/'
     )
     
-    sp.run(
-        'python moveFLCs.py',
-        shell=True
-    )
     
-    switch_conda_environment(drizEnv)
-    sp.run(
-        'python alignGaia.py',
-        shell=True
+if __name__ == '__main__':
+    parser = ap.ArgumentParser(description='Run HubPUG.')
+    _ = parser.add_argument(
+        '-c',
+        '--config',
+        help='Name of the config json file.\
+        (Default: config.json)',
+        default='../config.json',
+        type=str,
     )
-    
-    sp.run(
-        'python drizIt.py',
-        shell=True
-    )
-    
-    switch_conda_environment(mainEnv)
-    sp.run(
-        'python maskACS.py',
-        shell=True
-    )
-    
-    sp.run(
-        'cd aperPhotCodes/'    
-    )
+    args = parser.parse_args()
+
+    raise SystemExit(main(args))

@@ -120,7 +120,7 @@ def main(args):
         dataDir = os.path.join(config.script.dataDir,f'{targname}_f{ff}w')
         # Checking if this code was run before, which would mean the file was already masked
         if not os.path.exists(
-            os.path.join(dataDir,f'{targname}_f{ff}w_nomask.fits') ):
+            os.path.join(dataDir,f'{targname}_f{ff}w_nomask.fits')):
             maskACS(targname,ff,dataDir,qualDir)
         mvFits(targname,ff,dataDir,resDir)
         
