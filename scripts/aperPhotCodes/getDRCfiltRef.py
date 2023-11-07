@@ -11,7 +11,7 @@ import pandas as pd
 
 from src.matchlistUNQ import matchlistID
 
-def getDRCfiltRef(targname,filt1,filt2,photDir,matchtol,slice,suffix='.dat'):
+def getDRCfiltRef(targname,filt1,filt2,photDir,matchtol,slice,suffix='.dat',plot=True):
     """
     Getting the reference stars between the two filters so that I can do a 6D
     linear transform.
@@ -47,8 +47,10 @@ def getDRCfiltRef(targname,filt1,filt2,photDir,matchtol,slice,suffix='.dat'):
     
     nF_out = True  # not False
     while nF_out:
-        prime, matchids = matchlistID(p_in,cat,matchtol,f'x_f{filt1}w',f'y_f{filt1}w',
-                                      'xcenter','ycenter','id',saveDir=photDir)
+        prime, matchids = matchlistID(p_in,cat,matchtol,f'x_f{filt1}w',
+                                      f'y_f{filt1}w','xcenter','ycenter',
+                                      'id',tag='DRCref',saveDir=photDir,
+                                      plot=plot)
         
         if len(prime)>=int(12):  # Because it's going to be a 6D transformation, let's get at least double
             nF_out = False
@@ -91,8 +93,9 @@ def getDRCfiltRef(targname,filt1,filt2,photDir,matchtol,slice,suffix='.dat'):
 
 
 def main(args):
+    plot = args.plot
     config = pd.read_json(args.config)
-
+    
     targname = config.main.targname
     filt_arr = [
         f'{config.main.filt1}',
@@ -111,7 +114,7 @@ def main(args):
 
     print(f'Getting DRC references for files in {photDir}')    
     getDRCfiltRef(targname,filt_arr[0],filt_arr[1],photDir,matchtol=config.aper.drctol,
-                  slice=config.aper.slice,suffix=config.aper.suffix)
+                  slice=config.aper.slice,suffix=config.aper.suffix,plot=plot)
 
     return None
 
@@ -130,6 +133,13 @@ if __name__ == '__main__':
         '-d',
         '--date',
         help='Date of aperture photometry in format DDMonYY (01Jan24).',
+        type=str,
+    )
+    _ = parser.add_argument(
+        '-p',
+        '--plot',
+        help='Plot intermediate/end XY of reference stars.',
+        default=True,
         type=str,
     )
     args = parser.parse_args()

@@ -17,8 +17,18 @@
   "fwhm" : 3.5,
   "aperrad" : 0.2,
   "drctol" : 0.5,
+  "filtol" : 1.0,
+  "maxtol" : 4.0,
   "suffix" : ".dat",
-  "slice" : 500
+  "slice" : 500,
+  "plot" : "False"
+},
+
+"cmd" : {
+  "xmin" : -1.5,
+  "xmax" : 1.5,
+  "ymin" : 17.5,
+  "ymax" : 28
 },
 
 "driz" : {

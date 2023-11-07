@@ -59,6 +59,21 @@ def main(args):
         shell=True, 
         cwd='./aperPhotCodes/'
     )
+    sp.run(
+        'python drcFiltLinTrans.py',
+        shell=True, 
+        cwd='./aperPhotCodes/'
+    )
+    sp.run(
+        'python matchDRCfilt.py',
+        shell=True, 
+        cwd='./aperPhotCodes/'
+    )
+    sp.run(
+        'python makeCMD.py',
+        shell=True, 
+        cwd='./aperPhotCodes/'
+    )
     
     
 if __name__ == '__main__':
