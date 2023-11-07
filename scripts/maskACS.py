@@ -30,15 +30,18 @@ def maskACS(targname,filt,dataDir,qualDir):
     
     # Make plot for checking
     fig, ax = plt.subplots(figsize=(6,6))
-    ax.imshow(segment_map,origin='lower',cmap=segment_map.cmap,interpolation='nearest')
+    ax.imshow(segment_map,origin='lower',
+              cmap=segment_map.cmap,interpolation='nearest')
     
     ax.set_title('Segmentation Image')
     ax.set_rasterization_zorder(1)
     
-    plt.savefig(os.path.join(qualDir,f'segm_f{filt}w.pdf'),bbox_inches='tight',dpi=150)
+    plt.savefig(os.path.join(qualDir,f'segm_f{filt}w.pdf'),
+                bbox_inches='tight',dpi=150)
     plt.close()
     
-    cat = SourceCatalog(data,segment_map,convolved_data=convolved_data)
+    cat = SourceCatalog(data,segment_map,
+                        convolved_data=convolved_data)
     
     print('Converting catalog to table...')
     tbl = cat.to_table()
@@ -63,30 +66,38 @@ def maskACS(targname,filt,dataDir,qualDir):
     ax.set_title('Masked Image')
     ax.set_rasterization_zorder(1)
     
-    plt.savefig(os.path.join(qualDir,f'masked_f{filt}w.pdf'),bbox_inches='tight',dpi=150)
+    plt.savefig(os.path.join(qualDir,f'masked_f{filt}w.pdf'),
+                bbox_inches='tight',dpi=150)
     plt.close()
     
     print('Writing masked FITS...')
     with fits.open(os.path.join(dataDir,fname)) as hdu:
         hdu[0].data = tmp3
-        hdu.writeto(os.path.join(dataDir,f'{targname}_mf{filt}w.fits'),overwrite=True)
+        hdu.writeto(os.path.join(dataDir,
+                                 f'{targname}_mf{filt}w.fits'),
+                                 overwrite=True)
     
     return None
 
 
 def mvFits(targname,filt,dataDir,resDir):
-    mname = os.path.join(dataDir,f'{targname}_mf{filt}w.fits')  # Masked file
+    # Masked file
+    mname = os.path.join(dataDir,f'{targname}_mf{filt}w.fits')
     if not os.path.exists(mname):
-        print('The masked file doesn\'t seem to exist. Check some things.')
+        print('The masked file doesn\'t seem to exist. ')
+        print('Check some things.')
         return None
     
-    oname = os.path.join(dataDir,f'{targname}_f{filt}w.fits')  # Old, unmasked file
-    nname = os.path.join(dataDir,f'{targname}_f{filt}w_nomask.fits')  # New, unmasked file
-    rname = os.path.join(resDir,f'{targname}_f{filt}w.fits') # Masked file for results dir.
+    # Old, unmasked file
+    oname = os.path.join(dataDir,f'{targname}_f{filt}w.fits')
+    # New, unmasked file
+    nname = os.path.join(dataDir,f'{targname}_f{filt}w_nomask.fits')
+    # Masked file for results dir.
+    rname = os.path.join(resDir,f'{targname}_f{filt}w.fits')
     
     c0 = os.path.exists(nname)
     if c0:
-        print(f'{nname} already exists. Check yourself.')
+        print(f'{nname} already exists.')
         return None
     
     os.rename(oname,nname)
@@ -97,8 +108,10 @@ def mvFits(targname,filt,dataDir,resDir):
         print('Error in moving files.')
         return None
     
-    shutil.copy(mname,rname)  # Copying masked file to results dir.
-    os.rename(mname,oname)  # Renaming masked file in data dir.
+    # Copying masked file to results dir.
+    shutil.copy(mname,rname) 
+    # Renaming masked file in data dir. 
+    os.rename(mname,oname)  
     print('Moved files successfully.')
     
     return None
@@ -117,8 +130,10 @@ def main(args):
     qualDir = os.path.join(config.script.qualDir,targname)
     
     for ff in filt_arr:
-        dataDir = os.path.join(config.script.dataDir,f'{targname}_f{ff}w')
-        # Checking if this code was run before, which would mean the file was already masked
+        dataDir = os.path.join(config.script.dataDir,
+                               f'{targname}_f{ff}w')
+        # Checking if this code was run before, 
+        # which would mean the file was already masked
         if not os.path.exists(
             os.path.join(dataDir,f'{targname}_f{ff}w_nomask.fits')):
             maskACS(targname,ff,dataDir,qualDir)
@@ -129,7 +144,7 @@ def main(args):
 
 if __name__ == '__main__':
     parser = ap.ArgumentParser(
-        description='Drizzle the FLC files'
+        description='Mask the DRC files.'
     )
     _ = parser.add_argument(
         '-c',
@@ -139,7 +154,6 @@ if __name__ == '__main__':
         default='../config.json',
         type=str,
     )
-    
     args = parser.parse_args()
     
     raise SystemExit(main(args))

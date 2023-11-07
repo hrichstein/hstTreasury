@@ -7,7 +7,8 @@ from astropy.io import fits,ascii
 from astropy.stats import sigma_clipped_stats
 import numpy as np
 import pandas as pd
-from photutils.aperture import aperture_photometry,CircularAnnulus,CircularAperture
+from photutils.aperture import aperture_photometry,CircularAnnulus
+from photutils.aperture import CircularAperture
 from photutils.detection import DAOStarFinder
 from photutils.utils import calc_total_error
 
@@ -22,7 +23,8 @@ def runPhotUtils(targname,filt,zpt,sky,eeBand,resDir,
         print(f'Creating {photDir}')
         os.makedirs(photDir)
         
-    with fits.open(os.path.join(resDir,f'{targname}_f{filt}w.fits')) as hdu:
+    with fits.open(os.path.join(resDir,
+                                f'{targname}_f{filt}w.fits')) as hdu:
         data = hdu[0].data
         exptime = hdu[0].header['EXPTIME']
         readA = hdu[0].header['READNSEA']
@@ -35,7 +37,9 @@ def runPhotUtils(targname,filt,zpt,sky,eeBand,resDir,
     rnIn = np.sqrt(sky**2 + (rnMean*(scale/native))**2)
     effGain = 1.
     
-    if len(data) < 10:  # If the data has dimensions like (1,x,y), this will get it to (x,y)
+    # If the data has dimensions like (1,x,y), 
+    # this will get it to (x,y)
+    if len(data) < 10:  
         data = data[0]
         
     # For getting a flux error based on readnoise
@@ -74,7 +78,8 @@ def runPhotUtils(targname,filt,zpt,sky,eeBand,resDir,
     rawflux_rad['final_phot'] = rawflux_rad['aperture_sum'] \
                                 - rawflux_rad['aper_bkg']
 
-    # Looking at the excess flux (r+) and trying to use it as a star/galaxy indicator.
+    # Looking at the excess flux (r+) and trying to use it 
+    # as a star/galaxy indicator.
     apertures_rp = CircularAperture(positions, r=radius+(0.1/scale))
     rawflux_rp = aperture_photometry(data, apertures_rp)
     rawflux_rp['aper_bkg'] = rawflux_rad['annulus_median'] \
@@ -90,7 +95,8 @@ def runPhotUtils(targname,filt,zpt,sky,eeBand,resDir,
     rawflux_rm['final_phot'] = rawflux_rm['aperture_sum'] \
                                - rawflux_rm['aper_bkg']
     
-    # Getting items with positive mag differences between normal and r+ radius
+    # Getting items with positive mag differences between 
+    # normal and r+ radius
     mask_negative = (rawflux_rad['final_phot'] > 0) \
                      & (rawflux_rp['final_phot'] > 0)
     rawflux_pos_rad = rawflux_rad[mask_negative]
@@ -102,13 +108,15 @@ def runPhotUtils(targname,filt,zpt,sky,eeBand,resDir,
     mag_rp = -2.5 * np.log10(rawflux_pos_rp['final_phot'])
     mag_rm = -2.5 * np.log10(rawflux_pos_rm['final_phot'])
     
-    # Finding differences between magnitude in the fiducial radius and the larger radius (r+)
+    # Finding differences between magnitude in the fiducial radius 
+    # and the larger radius (r+)
     delta_mag = mag_rad - mag_rp
     # Differences must be positive and less than 0.1 mag
     mask_1 = (delta_mag > 0) & (delta_mag < 0.1)
     _, median, std = sigma_clipped_stats(delta_mag[mask_1],
                                          sigma=3.0, maxiters=5)
-    # Checking that any one source's difference is within 1.5 std of the median of all sources
+    # Checking that any one source's difference 
+    # is within 1.5 std of the median of all sources
     mask_rp = (delta_mag > 0) & (delta_mag < median + 1.5 * std)
     flagCol = np.zeros((len(mask_rp),1),dtype=int)
     for ii in range(len(mask_rp)):
@@ -125,11 +133,13 @@ def runPhotUtils(targname,filt,zpt,sky,eeBand,resDir,
     # Converting magnitudes from instrumental to observational STMAG
     final_phot = -2.5 * np.log10(rawflux_pos_rad['final_phot']/eeBand) \
                  + zpt + 2.5 * np.log10(exptime)
-    flux_err = rawflux_pos_rad['aperture_sum_err']/rawflux_pos_rad['aperture_sum']
+    flux_err = rawflux_pos_rad['aperture_sum_err'] \
+               / rawflux_pos_rad['aperture_sum']
     mag_err = 2.5/np.log(10) * flux_err
     rawflux_pos_rad['magr'] = final_phot.flatten()
     rawflux_pos_rad['magr_err'] = mag_err.flatten()
-    rawflux_pos_rad['id'] = np.arange(0,len(rawflux_pos_rad),1,dtype=int).flatten()
+    rawflux_pos_rad['id'] = np.arange(0,len(rawflux_pos_rad),
+                                      1,dtype=int).flatten()
     
     form_dict = {}
     for name in rawflux_pos_rad.dtype.names:
@@ -138,8 +148,10 @@ def runPhotUtils(targname,filt,zpt,sky,eeBand,resDir,
     form_dict['id'] = '%d'
     form_dict['six_4_flag'] = '%d'
     
-    ascii.write(rawflux_pos_rad,os.path.join(photDir,f'{targname}_aper{filt}.dat'),
-                format='commented_header',formats=form_dict,overwrite=True)
+    ascii.write(rawflux_pos_rad,
+                os.path.join(photDir,f'{targname}_aper{filt}.dat'),
+                format='commented_header',
+                formats=form_dict,overwrite=True)
 
     return None
 
@@ -168,7 +180,8 @@ def main(args):
         zpt = df.loc[f"F{filt}W","STMAG"]
         sky = df.loc[f"F{filt}W","SKYSIG"]
         try:
-            if len(zpt) > 1:  # If the zeropoint was added to the file multiple times
+            # If the zeropoint was added to the file multiple times
+            if len(zpt) > 1:  
                 zpt = zpt[-1]
                 sky = sky[-1]
         except TypeError:
@@ -184,7 +197,8 @@ def main(args):
 
 if __name__ == '__main__':
     parser = ap.ArgumentParser(
-        description='Creates a file with zeropoints and sky sigma values'
+        description='Runs aperture photometry routine\
+        from photutils.aperture.'
     )
     _ = parser.add_argument(
         '-c',
@@ -194,7 +208,6 @@ if __name__ == '__main__':
         default='../../config.json',
         type=str,
     )
-
     args = parser.parse_args()
 
     raise SystemExit(main(args))

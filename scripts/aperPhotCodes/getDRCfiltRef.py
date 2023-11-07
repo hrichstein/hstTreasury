@@ -13,8 +13,8 @@ from src.matchlistUNQ import matchlistID
 
 def getDRCfiltRef(targname,filt1,filt2,photDir,matchtol,slice,suffix='.dat',plot=True):
     """
-    Getting the reference stars between the two filters so that I can do a 6D
-    linear transform.
+    Getting the reference stars between the two filters so that 
+    I can do a 6D linear transform.
     """
     xx = os.listdir(photDir)
     for ii in xx:
@@ -30,7 +30,8 @@ def getDRCfiltRef(targname,filt1,filt2,photDir,matchtol,slice,suffix='.dat',plot
     filt1f = ascii.read(os.path.join(photDir,filt1_file))
     filt2f = ascii.read(os.path.join(photDir,filt2_file))
     
-    # Taking the brightest stars, to some 'count' number (~500 usually good)
+    # Taking the brightest stars, to some 'count' number 
+    # (~500 usually good)
     cut1 = np.argsort(filt1f['magr'])[:slice]
     f1_cut = filt1f[cut1]
     
@@ -51,8 +52,9 @@ def getDRCfiltRef(targname,filt1,filt2,photDir,matchtol,slice,suffix='.dat',plot
                                       f'y_f{filt1}w','xcenter','ycenter',
                                       'id',tag='DRCref',saveDir=photDir,
                                       plot=plot)
-        
-        if len(prime)>=int(12):  # Because it's going to be a 6D transformation, let's get at least double
+        # Because it's going to be a 6D transformation, 
+        # let's get at least double
+        if len(prime)>=int(12):  
             nF_out = False
             print(f'Minimum Number Reached for {targname}: {len(prime):d}')
         else:
@@ -61,7 +63,7 @@ def getDRCfiltRef(targname,filt1,filt2,photDir,matchtol,slice,suffix='.dat',plot
             matchtol += 0.5
             if matchtol >= 4:
                 nF_out = False
-                print('Not enough matches with pixel tolerance at {matchtol:d}.')
+                print('Not enough matches with tolerance at {matchtol:d}.')
                 print('Look for other issues.')
                 return None
                 
@@ -75,13 +77,16 @@ def getDRCfiltRef(targname,filt1,filt2,photDir,matchtol,slice,suffix='.dat',plot
         prime[name] = prime[name].flatten()
         
     outName = os.path.join(photDir,f'drcFiltRef_{targname}')
-    ascii.write(prime,f'{outName}.dat',overwrite=True,format='commented_header')
+    ascii.write(prime,f'{outName}.dat',
+                overwrite=True,format='commented_header')
     
     # Reference quality check plot
     fig, ax = plt.subplots(figsize=(6,6))
 
-    ax.scatter(prime[f'x_f{filt1}w'],prime[f'y_f{filt1}w'],label=f'F{filt1}W',s=50,color='black')
-    ax.scatter(prime[f'x_f{filt2}w'],prime[f'y_f{filt2}w'],label=f'F{filt2}W',s=20,color='magenta')
+    ax.scatter(prime[f'x_f{filt1}w'],prime[f'y_f{filt1}w'],
+               label=f'F{filt1}W',s=50,color='black')
+    ax.scatter(prime[f'x_f{filt2}w'],prime[f'y_f{filt2}w'],
+               label=f'F{filt2}W',s=20,color='magenta')
 
     ax.legend()
     ax.set_title(targname)
@@ -110,17 +115,25 @@ def main(args):
         if len(photDirList) == 1:
             photDir = photDirList[0]
         else:
-            photDir = max(photDirList, key=lambda p: datetime.strptime(p, os.path.join(resDir,f'drcPhot%d%b%y')))
+            photDir = max(photDirList, 
+                          key=lambda p: datetime.strptime(p, 
+                                        os.path.join(resDir,
+                                                     f'drcPhot%d%b%y')))
 
     print(f'Getting DRC references for files in {photDir}')    
-    getDRCfiltRef(targname,filt_arr[0],filt_arr[1],photDir,matchtol=config.aper.drctol,
-                  slice=config.aper.slice,suffix=config.aper.suffix,plot=plot)
+    getDRCfiltRef(targname,filt_arr[0],filt_arr[1],photDir,
+                  matchtol=config.aper.drctol,
+                  slice=config.aper.slice,
+                  suffix=config.aper.suffix,
+                  plot=plot)
 
     return None
 
 
 if __name__ == '__main__':
-    parser = ap.ArgumentParser(description='Find reference stars in DRC images.')
+    parser = ap.ArgumentParser(
+        description='Find reference stars \
+        in DRC images.')
     _ = parser.add_argument(
         '-c',
         '--config',
@@ -132,7 +145,8 @@ if __name__ == '__main__':
     _ = parser.add_argument(
         '-d',
         '--date',
-        help='Date of aperture photometry in format DDMonYY (01Jan24).',
+        help='Date of aperture photometry in format \
+        DDMonYY (01Jan24).',
         type=str,
     )
     _ = parser.add_argument(

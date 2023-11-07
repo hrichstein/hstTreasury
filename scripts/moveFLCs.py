@@ -7,7 +7,7 @@ import pandas as pd
 
 # To do: Add functionality to delete empty MAST folders
 
-def moveFLCs(targname,filt,dataDir,resDir):
+def moveFLCs(targname,filt,expCut,dataDir,resDir):
     filelist = glob(f'{dataDir}/mast*/**/*flc.fits',recursive=True)
     
     # If the files were downloaded via curl method: 
@@ -28,16 +28,18 @@ def moveFLCs(targname,filt,dataDir,resDir):
     for file in filelist:
         with fits.open(file,names=True) as hdu:
             if hdu[0].header['TARGNAME'] == targname:
-                if hdu[0].header['EXPTIME'] < 200:
+                if hdu[0].header['EXPTIME'] < expCut:
                     os.remove(file)
                     print('Removed short exposure')
-                if hdu[0].header['FILTER1'][0] == 'F':
+                elif hdu[0].header['FILTER1'][0] == 'F':
                     filt= hdu[0].header['FILTER1']
                 else:
                     filt = hdu[0].header['FILTER2']
                 fileroot = os.path.basename(file)
                 ff = filt[1:4] 
-                os.rename(file,os.path.join(dataDir,f'{targname}_f{ff}w',fileroot))
+                os.rename(file,os.path.join(dataDir,
+                                            f'{targname}_f{ff}w',
+                                            fileroot))
             
             else:
                 print(f'Skipping {file}...')
@@ -52,16 +54,16 @@ def main(args):
     config = pd.read_json(args.config)
 
     targname = config.main.targname
+    expCut = config.obs.expCut
     dataDir = config.script.dataDir
     resDir = config.script.resDir
-    
     filt_arr = [
         f'{config.main.filt1}',
         f'{config.main.filt2}'
         ]
 
     for ff in filt_arr:
-        moveFLCs(targname,filt_arr[ff],dataDir,resDir)
+        moveFLCs(targname,filt_arr[ff],expCut,dataDir,resDir)
 
     return None
 

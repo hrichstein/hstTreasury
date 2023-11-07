@@ -10,11 +10,13 @@ import pandas as pd
 
 from src.matchlistUNQ import matchlistID
 
-def matchDRCfilt(targname,filt1,filt2,photDir,matchtol,maxtol,suffix='.dat',plot=False):
+def matchDRCfilt(targname,filt1,filt2,photDir,
+                 matchtol,maxtol,suffix='.dat',plot=False):
     """
     Matching sources between DRC filters using 6D-transformed positions
-    In the previous code, I transformed sources from filter2 into filter1 space.
-    I will take the original filter1 catalog and the new filter2 catalog.
+    In the previous code, I transformed sources from filter2 into 
+    filter1 space. I will take the original filter1 catalog and the 
+    new filter2 catalog.
     """
     xx = os.listdir(photDir)
     for ii in xx:
@@ -58,15 +60,17 @@ def matchDRCfilt(targname,filt1,filt2,photDir,matchtol,maxtol,suffix='.dat',plot
         else:
             if matchtol < maxtol+1:
                 print('Looking for more matches')    
-                print(f'Pixel tolerance: {matchtol:.1f}, Sources: {len(prime):d}')
+                print(f'Pixel tolerance: {matchtol:.1f},')
+                print(f'Sources: {len(prime):d}')
                 matchtol += 1
                 p_in = Table(prime_in,copy=True)
             else:
                 print(f'Maximum tolerance ({maxtol:.1f} pixels) reached.')
                 print(f'Final number of sources: {len(prime):d}')
                 nF_out = False
-                
-    print(f'{len(prime)/minLen*100:.2f}% of sources matched.')  # The percentage of sources matched
+    
+    # The percentage of sources matched
+    print(f'{len(prime)/minLen*100:.2f}% of sources matched.')  
     print(f'{len(prime):d} matched sources.')
     
     idx1 = np.asarray(prime[f'id_{filt1}'],int)
@@ -123,7 +127,7 @@ def main(args):
 
 if __name__ == '__main__':
     parser = ap.ArgumentParser(
-        description='Creates a file with zeropoints and sky sigma values'
+        description='Matches sources between the two filters.'
     )
     _ = parser.add_argument(
         '-c',
@@ -136,7 +140,8 @@ if __name__ == '__main__':
     _ = parser.add_argument(
         '-d',
         '--date',
-        help='Date of aperture photometry in format DDMonYY (01Jan24).',
+        help='Date of aperture photometry in format \
+        DDMonYY (01Jan24).',
         type=str,
     )
     _ = parser.add_argument(

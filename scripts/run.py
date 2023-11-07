@@ -19,41 +19,41 @@ def main(args):
     # sfdEnv = config.main.sfdEnv
     
     switch_conda_environment(mainEnv)
-    # sp.run(
-    #     'python getObs.py',
-    #     shell=True
-    # )
-    # sp.run(
-    #     'python moveFLCs.py',
-    #     shell=True
-    # )
+    sp.run(
+        'python getObs.py',
+        shell=True
+    )
+    sp.run(
+        'python moveFLCs.py',
+        shell=True
+    )
     
-    # switch_conda_environment(drizEnv)
-    # sp.run(
-    #     'python alignGaia.py',
-    #     shell=True
-    # )
-    # sp.run(
-    #     'python drizIt.py',
-    #     shell=True
-    # )
+    switch_conda_environment(drizEnv)
+    sp.run(
+        'python alignGaia.py',
+        shell=True
+    )
+    sp.run(
+        'python drizIt.py',
+        shell=True
+    )
     
-    # switch_conda_environment(mainEnv)
-    # sp.run(
-    #     'python maskACS.py',
-    #     shell=True
-    # )
+    switch_conda_environment(mainEnv)
+    sp.run(
+        'python maskACS.py',
+        shell=True
+    )
     
-    # sp.run(
-    #     'python getZPTsky.py',
-    #     shell=True, 
-    #     cwd='./aperPhotCodes/'
-    # )
-    # sp.run(
-    #     'python runPhotUtils.py',
-    #     shell=True, 
-    #     cwd='./aperPhotCodes/'
-    # )
+    sp.run(
+        'python getZPTsky.py',
+        shell=True, 
+        cwd='./aperPhotCodes/'
+    )
+    sp.run(
+        'python runPhotUtils.py',
+        shell=True, 
+        cwd='./aperPhotCodes/'
+    )
     sp.run(
         'python getDRCfiltRef.py',
         shell=True, 
@@ -77,7 +77,8 @@ def main(args):
     
     
 if __name__ == '__main__':
-    parser = ap.ArgumentParser(description='Run hstTreasury Pipeline.')
+    parser = ap.ArgumentParser(
+        description='Run hstTreasury Pipeline.')
     _ = parser.add_argument(
         '-c',
         '--config',

@@ -41,10 +41,12 @@ def drcFiltLinTrans(targname,filt1,filt2,photDir,suffix='.dat'):
             filt2_file = ii
     
     # Going from filter 2 to filter 1
-    ref = ascii.read(os.path.join(photDir,f'drcFiltRef_{targname}.dat'))
+    ref = ascii.read(os.path.join(photDir,
+                                  f'drcFiltRef_{targname}.dat'))
     all = ascii.read(os.path.join(photDir,filt2_file))
     
-    # Putting the filter 2 positions into the match array to be used as refs
+    # Putting the filter 2 positions into the match array 
+    # to be used as refs
     match_arr = np.zeros((len(ref),2))    
     match_arr[:,0] = ref[f'x_f{filt2}w'].flatten()
     match_arr[:,1] = ref[f'y_f{filt2}w'].flatten()
@@ -58,7 +60,8 @@ def drcFiltLinTrans(targname,filt1,filt2,photDir,suffix='.dat'):
     # We haven't assigned useful values to them.
     weights = np.ones(len(prime_arr))
     
-    # Creating an array that will hold the original and transformed values
+    # Creating an array that will hold the original 
+    # and transformed values
     all_arr = np.zeros((len(all),2))
     all_arr[:,0] = all['xcenter'].flatten()
     all_arr[:,1] = all['ycenter'].flatten()
@@ -69,19 +72,24 @@ def drcFiltLinTrans(targname,filt1,filt2,photDir,suffix='.dat'):
     # the prime, weights, and the xy points in the match_arr frame
     # that will be transformed into the prime_arr frame.
     new_match, new_all = test_linear(match_arr[:,0],match_arr[:,1],
-                                     prime_arr[:,0],prime_arr[:,1],weights,
-                                     weights, all_arr[:,0],all_arr[:,1])
+                                     prime_arr[:,0],prime_arr[:,1],
+                                     weights,weights,
+                                     all_arr[:,0],all_arr[:,1])
 
     all[f'x_f{filt1}wTrans'] = np.round(new_all[:,0],5).flatten()
     all[f'y_f{filt1}wTrans'] = np.round(new_all[:,1],5).flatten()
     
     outName = os.path.join(photDir,f'drcTrans_{targname}_F{filt2}W')
-    ascii.write(all,f'{outName}.dat',overwrite=True,format='commented_header')
+    ascii.write(all,f'{outName}.dat',overwrite=True,
+                format='commented_header')
     
-    makePlot(targname,match_arr[:,0],match_arr[:,1],prime_arr[:,0],
-             prime_arr[:,1],new_match[:,0],new_match[:,1],
-             label_1=f'Original in F{filt2}W',label_2=f'Original in F{filt1}W',
-             label_3=f'New in F{filt2}W to F{filt1}W',outName=outName+'_matchCheck')
+    makePlot(targname,match_arr[:,0],match_arr[:,1],
+             prime_arr[:,0],prime_arr[:,1],
+             new_match[:,0],new_match[:,1],
+             label_1=f'Original in F{filt2}W',
+             label_2=f'Original in F{filt1}W',
+             label_3=f'New in F{filt2}W to F{filt1}W',
+             outName=f'{outName}_matchCheck')
 
     return None
 
@@ -103,17 +111,22 @@ def main(args):
         if len(photDirList) == 1:
             photDir = photDirList[0]
         else:
-            photDir = max(photDirList, key=lambda p: datetime.strptime(p, os.path.join(resDir,f'drcPhot%d%b%y')))
+            photDir = max(photDirList, 
+                          key=lambda p: datetime.strptime(p, 
+                                        os.path.join(resDir,
+                                                     f'drcPhot%d%b%y')))
 
     print(f'Linearly transforming DRC catalogs in {photDir}')    
-    drcFiltLinTrans(targname,filt_arr[0],filt_arr[1],photDir,suffix=config.aper.suffix)
+    drcFiltLinTrans(targname,filt_arr[0],filt_arr[1],
+                    photDir,suffix=config.aper.suffix)
     
     return None
 
 
 if __name__ == '__main__':
     parser = ap.ArgumentParser(
-        description='Creates a file with zeropoints and sky sigma values'
+        description='Calculates and outputs transformations of \
+        sources in filter 2 to filter 1.'
     )
     _ = parser.add_argument(
         '-c',
@@ -126,7 +139,8 @@ if __name__ == '__main__':
     _ = parser.add_argument(
         '-d',
         '--date',
-        help='Date of aperture photometry in format DDMonYY (01Jan24).',
+        help='Date of aperture photometry in format \
+        DDMonYY (01Jan24).',
         type=str,
     )
     args = parser.parse_args()

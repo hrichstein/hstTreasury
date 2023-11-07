@@ -10,19 +10,26 @@ import numpy as np
 import pandas as pd
 
 def makeCMD(targname,filt1,filt2,xmin,xmax,ymin,ymax,photDir):
-    drcFile = ascii.read(os.path.join(photDir,f'{targname}_matchedDRC.dat'))
+    drcFile = ascii.read(os.path.join(photDir,
+                                      f'{targname}_matchedDRC.dat'))
     
-    mask = drcFile[f'six_4_flag_f{filt1}w']==1
+    mask = np.logical_or(drcFile[f'six_4_flag_f{filt1}w']==1,
+                         drcFile[f'six_4_flag_f{filt2}w']==1)
     drc = drcFile[mask]
     
     fig,ax = plt.subplots(figsize=(4,6.5))
     ax.scatter(drcFile[f'magr_f{filt1}w']-drcFile[f'magr_f{filt2}w'],
-               drcFile[f'magr_f{filt1}w'],s=10,label='All',color='gray',
+               drcFile[f'magr_f{filt1}w'],
+               s=10,
+               label='All',
+               color='gray',
                alpha=0.5)
     
     ax.scatter(drc[f'magr_f{filt1}w']-drc[f'magr_f{filt2}w'],
-               drc[f'magr_f{filt1}w'],s=20,label='Likely Stars',
-               color='k',marker='*')
+               drc[f'magr_f{filt1}w'],
+               s=20,
+               label='Likely Stars',
+               color='k')
     
     ax.set_ylim(ymax,ymin)
     ax.set_xlim(xmin,xmax)
@@ -55,10 +62,13 @@ def main(args):
         if len(photDirList) == 1:
             photDir = photDirList[0]
         else:
-            photDir = max(photDirList, key=lambda p: datetime.strptime(p, os.path.join(resDir,f'drcPhot%d%b%y')))
+            photDir = max(photDirList, 
+                          key=lambda p: datetime.strptime(p, 
+                                        os.path.join(resDir,f'drcPhot%d%b%y')))
     
-    makeCMD(targname,filt_arr[0],filt_arr[1],config.cmd.xmin,
-            config.cmd.xmax,config.cmd.ymin,config.cmd.ymax,
+    makeCMD(targname,filt_arr[0],filt_arr[1],
+            config.cmd.xmin,config.cmd.xmax,
+            config.cmd.ymin,config.cmd.ymax,
             photDir)
     
     return None
@@ -66,7 +76,8 @@ def main(args):
 
 if __name__ == '__main__':
     parser = ap.ArgumentParser(
-        description='Creates a file with zeropoints and sky sigma values'
+        description='Creates a CMD using the \
+        matched DRC photometry.'
     )
     _ = parser.add_argument(
         '-c',
@@ -79,7 +90,8 @@ if __name__ == '__main__':
     _ = parser.add_argument(
         '-d',
         '--date',
-        help='Date of aperture photometry in format DDMonYY (01Jan24).',
+        help='Date of aperture photometry in format \
+        DDMonYY (01Jan24).',
         type=str,
     )
     args = parser.parse_args()

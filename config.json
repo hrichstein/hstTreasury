@@ -38,6 +38,12 @@
   "native" : 0.05
 },
 
+"obs" : {
+  "propID" : "14734",
+  "instrument" : "ACS/WFC",
+  "expCut" : 200
+},
+
 "script" : {
   "dataDir" : "../data",
   "resDir" : "../results",
