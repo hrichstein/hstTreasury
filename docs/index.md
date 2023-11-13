@@ -1,15 +1,15 @@
 # List of included files
 
 ## Data
-### getHor1data.sh
+#### getHor1data.sh
 Run this file to download the MAST data set for Horologium I into the data directory. This will be in a nested structure, but the orgFLC.py script will clean this up.
 
 To get other targets, go to MAST, select what you need, and copy the API script with the "curl" commands. Paste those in the terminal while in the data/ directory.
 
-### mastQuery.ipynb
+#### mastQuery.ipynb
 Alternatively, if you're not a fan of using curl/would like to do things without having to go to MAST directly, this Jupyter Notebook shows how to use astroquery.mast to get the relevant data. If you want other targets for this program, simply change the "tname."
 
-### From within the run.py...
+#### From within the run.py...
 If you use the run.py file in the scripts directory, it will run getObs.py, which will use astroquery.mast to get the observations.
 
 ## Scripts
@@ -27,7 +27,7 @@ Drizzles the images with the customized (optimized) configuration file. Read the
 #### 5. maskACS.py  
 Finds large sources (e.g., galaxies, saturated stars, chip gap) in the DRC and replaces the pixel values with a very large number. Moves the relevant file from the data directory to the results directory.
 
-From within aperPhotCodes directory:  
+### From within aperPhotCodes directory:  
 
 #### 6. getZPTsky.py  
 Fetches the zeropoint for the date that the image was taken. Additionally finds the sky sigma value (using code from dnidever) and outputs the zeropoint and sky sigma out to a file for later reference.  

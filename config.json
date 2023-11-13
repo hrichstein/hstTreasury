@@ -41,7 +41,9 @@
 "obs" : {
   "propID" : "14734",
   "instrument" : "ACS/WFC",
-  "expCut" : 200
+  "expCut" : 200,
+  "hilim" : 9e4,
+  "varpsf" : 2
 },
 
 "script" : {

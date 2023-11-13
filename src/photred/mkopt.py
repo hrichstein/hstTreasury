@@ -2,9 +2,7 @@
 
 import os
 import numpy as np
-from astropy.io import fits,ascii
-from astropy.table import Table
-from astropy.time import Time
+from astropy.io import fits
 from astropy.utils.exceptions import AstropyWarning
 import warnings
 from dlnpyutils import utils as dln
