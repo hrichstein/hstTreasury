@@ -151,4 +151,4 @@ cython_debug/
 *._*
 
 oldScripts/
-results/*
+results/**/
