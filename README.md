@@ -1,5 +1,6 @@
-# hstTreasury
+ # hstTreasury
 
-This currently has code for running the aperture photometry portion of a pipeline developed for the Milky Way Ultra-Faint Dwarf Treasury Program.  
+This serves as the code distribution for the aperture and PSF photometry pipelines created for HST Treasury Program GO-14734.  
 
-There will also be scripts added for artificial star test runs and for using DAOPHOT PSF photometric outputs to create source catalogs.
+Currently, only the aperture photometry portion has been publicly shared.  
+The PSF photometry and artificial star test scripts will be added following the submission of the data release paper, although some may be posted as time permits.
