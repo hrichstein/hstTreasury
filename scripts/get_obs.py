@@ -4,39 +4,40 @@ import os
 from astroquery.mast import Observations
 import pandas as pd
 
-def getObs(targname,proposalID,instrument,dataDir):
-    obs_table = Observations.query_criteria(proposal_id=proposalID,
+
+def getObs(targname, proposal_id, instrument, data_dir):
+    obs_table = Observations.query_criteria(proposal_id=proposal_id,
                                             obs_collection='HST',
                                             dataproduct_type='IMAGE',
                                             instrument_name=instrument,
                                             target_name=targname)
-    
+
     prod_list = Observations.get_product_list(obs_table)
-    
+
     cut_list = Observations.filter_products(prod_list,
                                             productType='SCIENCE',
                                             productSubGroupDescription='FLC',
                                             project='CALACS')
-    
+
     manifest = Observations.download_products(cut_list,
                                               extension='flc.fits',
-                                              download_dir=dataDir)
-    
+                                              download_dir=data_dir)
+
     print(manifest['Local Path'])
-    
+
     return None
 
 
 def main(args):
     config = pd.read_json(args.config)
-    
+
     targname = config.main.targname
-    propID = config.obs.propID
+    prop_id = config.obs.prop_id
     instrument = config.obs.instrument
-    dataDir = config.script.dataDir
-    
-    getObs(targname,propID,instrument,dataDir)
-    
+    data_dir = config.script.data_dir
+
+    getObs(targname, prop_id, instrument, data_dir)
+
     return None
 
 
@@ -54,5 +55,5 @@ if __name__ == '__main__':
         type=str,
     )
     args = parser.parse_args()
-    
+
     raise SystemExit(main(args))

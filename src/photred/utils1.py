@@ -13,6 +13,7 @@ from itertools import zip_longest
 from itertools import accumulate
 from io import StringIO
 
+
 def isfloat(s):
     """ Returns True is string is a number. """
     try:
@@ -21,38 +22,39 @@ def isfloat(s):
     except ValueError:
         return False
 
+
 def file_isfits(filename):
     """
     Check if this file is a FITS file or not. 
- 
+
     Parameters
     ----------
     filename   The name of the file to check. 
- 
+
     Returns
     -------
     return     1 if the file is a FITS file and 0 otherwise. 
- 
+
     Example
     ------
-  
+
     test = file_isfits(filename) 
- 
+
     By D. Nidever, Jan 2019 
     Based partially from is_fits.pro by Dave Bazell 
     Translated to python by D. Nidever, April 2022
     """
 
-    # Does the file exist 
-    if os.path.exists(filename)==False:
+    # Does the file exist
+    if os.path.exists(filename) == False:
         return False
-     
-    # Four possible possibilities: 
-    # 1) Regular FITS file (this includes fpacked FITS files) 
-    # 2) Gzipped FITS file 
-    # 3) ASCII file 
-    # 4) Some other binary file 
-     
+
+    # Four possible possibilities:
+    # 1) Regular FITS file (this includes fpacked FITS files)
+    # 2) Gzipped FITS file
+    # 3) ASCII file
+    # 4) Some other binary file
+
     # Try to open the file normally
     # astropy will catch lots of problems
     #  empty file, corrupted file, not a FITS file
@@ -64,10 +66,11 @@ def file_isfits(filename):
     hdu.close()
     return True
 
-def file_wait(filename,wait=5,timeout=600,silent=False):
+
+def file_wait(filename, wait=5, timeout=600, silent=False):
     """
     Wait until a file exists. 
- 
+
     Parameters
     ----------
     filename : str
@@ -79,35 +82,36 @@ def file_wait(filename,wait=5,timeout=600,silent=False):
          is 600 sec. 
     silent : boolean, optional
        Don't print anything to the screen 
- 
+
     Returns
     -------
     None 
- 
+
     Example
     -------
 
     file_wait('file.txt')
- 
+
     By D. Nidever  April 2020 
     Translated to Python by D. Nidever,  April 2022
     """
 
-    # While loop 
-    t0 = time.time() 
+    # While loop
+    t0 = time.time()
     while (os.path.exists(filename) == False):
-        if silent==False:
+        if silent == False:
             print(filename+' NOT FOUND.  Waiting '+str(wait)+' sec.')
         time.sleep(wait)
-        if time.time()-t0 > timeout: 
-            raise ValueError('Timeout ('+str(timeout)+' sec) reached on '+filename)
+        if time.time()-t0 > timeout:
+            raise ValueError(
+                'Timeout ('+str(timeout)+' sec) reached on '+filename)
 
 
-def fitsext(files,isfpack=False,basename=False,full=False):
+def fitsext(files, isfpack=False, basename=False, full=False):
     """
     Gets the fits extension (.fits or .fits.fz) and optionaly 
     the base name. 
- 
+
     Parameters
     ----------
     files : str or list
@@ -121,7 +125,7 @@ def fitsext(files,isfpack=False,basename=False,full=False):
        Returns an array of basename and extension.  If a 
          single file is input then the output will a 2-element 
          array, otherwise it is [Nfiles,2].  Default is False.
- 
+
     Returns
     -------
     output : str
@@ -135,91 +139,92 @@ def fitsext(files,isfpack=False,basename=False,full=False):
           full      Returns the file basename and extension in 
                        2-element or [Nfiles,2] array depending 
                       on how many files were input. 
- 
+
     Example
     -------
 
     ext = fitsext('F2-04958679_01.fits.fz') 
- 
+
     By D. Nidever  August 2017 
     Translated to Python by D. Nidever,  April 2022
     """
- 
-    # Cases 
-    # 1 - extension only 
-    # 2 - isfpack, boolean 1/0 
-    # 3 - basename only 
-    # 4 - full, basename and extension 
-    usecase = 1 # extension by default
+
+    # Cases
+    # 1 - extension only
+    # 2 - isfpack, boolean 1/0
+    # 3 - basename only
+    # 4 - full, basename and extension
+    usecase = 1  # extension by default
     if isfpack:
         usecase = 2
     if basename:
         usecase = 3
     if full:
-        usecase = 4 
+        usecase = 4
 
     nfiles = np.array(files).size
-    if nfiles==1 and (type(files)==str or type(files)==np.str or type(files)==np.str_):
+    if nfiles == 1 and (type(files) == str or type(files) == np.str or type(files) == np.str_):
         files = [files]
-    
-    # Initializing the output array 
+
+    # Initializing the output array
     out = None
-    # Extension only     
-    if usecase==1:
-        out = np.zeros(nfiles,(np.str,100))
-    # isfpack, boolean 1/0 
-    elif usecase==2:
-        out = np.zeros(nfiles,bool)
-    # basename only 
-    elif usecase==3:
-        out = np.zeros(nfiles,(np.str,100))
+    # Extension only
+    if usecase == 1:
+        out = np.zeros(nfiles, (np.str, 100))
+    # isfpack, boolean 1/0
+    elif usecase == 2:
+        out = np.zeros(nfiles, bool)
+    # basename only
+    elif usecase == 3:
+        out = np.zeros(nfiles, (np.str, 100))
     # full, basename and extension
-    elif usecase==4:
+    elif usecase == 4:
         if nfiles == 1:
-            out = np.zeros(2,(np.str,100))
+            out = np.zeros(2, (np.str, 100))
         else:
-            out = np.zeros((nfiles,2),(np.str,100))
-    else: # Not supported 
+            out = np.zeros((nfiles, 2), (np.str, 100))
+    else:  # Not supported
         pass
-         
-    # Loop through the files 
-    for i in range(nfiles): 
+
+    # Loop through the files
+    for i in range(nfiles):
         file1 = os.path.basename(files[i].strip())
-             
-        # Get the extension 
+
+        # Get the extension
         ext = ''
         if file1[-7:] == 'fits.fz':
             ext = '.fits.fz'
-        elif file1[-4:]=='fits':
-            ext = '.fits' 
-             
-        # Extension only 
-        if usecase==1:
-            out[i] = ext 
+        elif file1[-4:] == 'fits':
+            ext = '.fits'
+
+        # Extension only
+        if usecase == 1:
+            out[i] = ext
         # isfpack, boolean
-        elif usecase==2:
+        elif usecase == 2:
             if ext == '.fits.fz':
                 out[i] = True
         # basename only
-        elif usecase==3:
+        elif usecase == 3:
             out[i] = file1[0:-len(ext)]
-        # full, basename and extension 
-        elif usecase==4:
-            if nfiles == 1: 
+        # full, basename and extension
+        elif usecase == 4:
+            if nfiles == 1:
                 out[0] = file1[0:-len(ext)]
-                out[1] = ext 
-            else: 
-                out[i,0] = file1[0:-len(ext)]
-                out[i,1] = ext 
-        else:  # Not supported 
+                out[1] = ext
+            else:
+                out[i, 0] = file1[0:-len(ext)]
+                out[i, 1] = ext
+        else:  # Not supported
             pass
 
-    if nfiles==1 and out.ndim==1:
+    if nfiles == 1 and out.ndim == 1:
         out = out[0]
-     
-    return out 
 
-def date2jd(dateobs,mjd=False):
+    return out
+
+
+def date2jd(dateobs, mjd=False):
     """ Converte DATE-OBS to JD or MJD."""
     t = Time(dateobs, format='fits')
     if mjd:
@@ -227,7 +232,8 @@ def date2jd(dateobs,mjd=False):
     else:
         return t.jd
 
-def trans_coo(xdata,*par):
+
+def trans_coo(xdata, *par):
     """ Apply the transformation to X/Y"""
 
     xin = xdata[0]
@@ -239,7 +245,7 @@ def trans_coo(xdata,*par):
     D = par[3]
     E = par[4]
     F = par[5]
-    
+
     # from ccdpck.txt
     #              x(1) = A + C*x(n) + E*y(n)
     #              y(1) = B + D*x(n) + F*y(n)
@@ -247,71 +253,73 @@ def trans_coo(xdata,*par):
     # Apply transformation
     xout = A + C*xin + E*yin
     yout = B + D*xin + F*yin
-    
-    return xout,yout
+
+    return xout, yout
 
 
-def trans_coo_dev(xdata,*par):
+def trans_coo_dev(xdata, *par):
 
     # Rotate coordinates(2) to coordinate system 1
     # and return deviates
-    x1,y1 = xdata[0]
-    x2,y2 = xdata[1]
+    x1, y1 = xdata[0]
+    x2, y2 = xdata[1]
 
-    newx2,newy2 = trans_coo([x2,y2],*par)
+    newx2, newy2 = trans_coo([x2, y2], *par)
 
-    diff = np.sqrt( (x1-newx2)**2 + (y1-newy2)**2 )
+    diff = np.sqrt((x1-newx2)**2 + (y1-newy2)**2)
 
     # Do robust outlier rejection
     std = dln.mad(diff)
     med = np.median(diff)
     bd = (diff > (med+3.0*std))
-    if np.sum(bd)>0:
+    if np.sum(bd) > 0:
         diff[bd] = 0.0
 
     return diff.flatten()
 
-def trans_coo_outlier(xdata,*par):
+
+def trans_coo_outlier(xdata, *par):
 
     # Rotate coordinates(2) to coordinate system 1
     # and return deviates
-    x1,y1 = xdata[0]
-    x2,y2 = xdata[1]
+    x1, y1 = xdata[0]
+    x2, y2 = xdata[1]
 
-    newx2,newy2 = trans_coo([x2,y2],*par)
+    newx2, newy2 = trans_coo([x2, y2], *par)
 
-    diff = np.sqrt( (x1-newx2)**2 + (y1-newy2)**2 )
+    diff = np.sqrt((x1-newx2)**2 + (y1-newy2)**2)
 
     # Do robust outlier rejection
     std = dln.mad(diff)
     med = np.median(diff)
     bd = (diff > (med+3.0*std))
-    if np.sum(bd)>0:
+    if np.sum(bd) > 0:
         newx2[bd] = x1[bd]
         newy2[bd] = y1[bd]
 
-    return np.append(newx2,newy2)
- 
+    return np.append(newx2, newy2)
+
+
 def validtile(tile):
     """
     This double-checks if the TILE structure is valid. 
- 
+
     Parameters
     ----------
     tile : dict
       The tile structure 
- 
+
     Returns
     -------
     check : boolean
       1-if the tile is good and 0-if there is 
         a problem with it or it doesn't exist. 
- 
+
     Example
     -------
 
     check = validtile(tile) 
- 
+
     By D. Nidever  Oct 2016 
     Translated to Python by D. Nidever, April 2022
     """
@@ -319,36 +327,36 @@ def validtile(tile):
     # Must be a dictionary
     if type(tile) != dict:
         return 0
-     
-    # Must have TYPE column 
+
+    # Must have TYPE column
     if 'type' not in tile.keys():
         return 0
-     
-    # Do we have enough information for each type 
-    if tile['type'].lower()=='orig':
-        return 1 
-    elif tile['type'].lower()=='wcs':
-        # wcs exists 
+
+    # Do we have enough information for each type
+    if tile['type'].lower() == 'orig':
+        return 1
+    elif tile['type'].lower() == 'wcs':
+        # wcs exists
         if 'wcs' in tile.keys():
             # wcs must be a WCS object
             if type(tile['wcs']) != WCS:
-                return 0         
-        # NO wcs, check other needed values 
-        else: 
-            # Need NAXIS, CRVAL, CRPIX, CTYPE, CDELT 
-            for k in ['naxis','crval','crpix','ctype','cdelt']:
+                return 0
+        # NO wcs, check other needed values
+        else:
+            # Need NAXIS, CRVAL, CRPIX, CTYPE, CDELT
+            for k in ['naxis', 'crval', 'crpix', 'ctype', 'cdelt']:
                 if k not in tile.keys():
                     return 0
-    # Need XRANGE, YRANGE 
+    # Need XRANGE, YRANGE
     if 'xrange' not in tile.keys():
         return 0
     if 'yrange' not in tile.keys():
-        return 0 
- 
-    return 1 
+        return 0
+
+    return 1
 
 
-def meanclip(image,clipsig=3,maxiter=5,converge_num=0.02,verbose=False):
+def meanclip(image, clipsig=3, maxiter=5, converge_num=0.02, verbose=False):
     """
     Computes an iteratively sigma-clipped mean on a data set,
 
@@ -375,7 +383,7 @@ def meanclip(image,clipsig=3,maxiter=5,converge_num=0.02,verbose=False):
     ct = len(subs)
     niter = 0
     endflag = False
-    while (endflag==False):
+    while (endflag == False):
         skpix = image.ravel()[subs]
         niter += 1
         lastct = ct
@@ -384,7 +392,7 @@ def meanclip(image,clipsig=3,maxiter=5,converge_num=0.02,verbose=False):
         wsm = (np.abs(skpix-medval) < clipsig*sig)
         ct = np.sum(wsm)
         if ct > 0:
-            subs = subs[wsm]         
+            subs = subs[wsm]
         if (np.float(np.abs(ct-lastct))/lastct <= converge_num) or (niter > maxiter) or (ct == 0):
             endflag = True
 
@@ -394,35 +402,34 @@ def meanclip(image,clipsig=3,maxiter=5,converge_num=0.02,verbose=False):
     return mean, sigma, subs
 
 
-
-def mmm(sky_vector, highbad=None,debug=False,readnoise=None,
-        integer=False,maxiter=50,silent=False,minsky=20):
+def mmm(sky_vector, highbad=None, debug=False, readnoise=None,
+        integer=False, maxiter=50, silent=False, minsky=20):
     """
     Estimate the sky background in a stellar contaminated field. 
 
     MMM assumes that contaminated sky pixel values overwhelmingly display 
     POSITIVE departures from the true value.  Adapted from DAOPHOT 
     routine of the same name. 
-     
+
     CALLING SEQUENCE: 
            MMM, sky, [ skymod, sigma, skew, HIGHBAD = , READNOISE=, /DEBUG, 
                       MINSKY=, NSKY=, /INTEGER,/SILENT] 
-     
+
     INPUTS: 
            SKY - Array or Vector containing sky values.  This version of 
                    MMM does not require SKY to be sorted beforehand.  SKY 
                    is unaltered by this program. 
-     
+
     OPTIONAL OUTPUTS: 
            skymod - Scalar giving estimated mode of the sky values (float) 
            SIGMA -  Scalar giving standard deviation of the peak in the sky 
                    histogram.  If for some reason it is impossible to derive 
                    skymod, then SIGMA = -1.0 
            SKEW -   Scalar giving skewness of the peak in the sky histogram 
-     
+
                    If no output variables are supplied or if /DEBUG is set 
                    then the values of skymod, SIGMA and SKEW will be printed. 
-     
+
     OPTIONAL KEYWORD INPUTS: 
            HIGHBAD - scalar value of the (lowest) "bad" pixel level (e.g. cosmic 
                     rays or saturated pixels) If not supplied, then there is 
@@ -468,7 +475,7 @@ def mmm(sky_vector, highbad=None,debug=False,readnoise=None,
            mean and median of the remaining sky pixels.   If the mean is larger 
            than the median then the true sky value is estimated by 
            3*median - 2*mean 
-     
+
      REVISION HISTORY: 
            Adapted to IDL from 1986 version of DAOPHOT in STSDAS, 
            W. Landsman, STX Feb 1987 
@@ -488,185 +495,195 @@ def mmm(sky_vector, highbad=None,debug=False,readnoise=None,
            Add mxiter keyword and change default to 50  W. Landsman August 2011 
            Added MINSKY keyword W.L. December 2011 
            Always return floating point sky mode  W.L.  December 2015 
-    """ 
-     
-    nsky = np.array(sky_vector).size  # Get number of sky elements 
-     
-    if nsky < minsky: 
-        raise ValueError('ERROR -Input vector must contain at least '+str(minsky)+' elements')
-     
+    """
+
+    nsky = np.array(sky_vector).size  # Get number of sky elements
+
+    if nsky < minsky:
+        raise ValueError(
+            f'ERROR -Input vector must contain at least {minsky} elements')
+
     nlast = nsky-1  # Subscript of last pixel in SKY array
     if debug:
         print('Processing '+str(nsky) + ' element array')
-    if ~integer: 
+    if ~integer:
         integer = str(sky_vector.ravel()[0]).isnumeric()
-        
-    sky = np.sort(sky_vector.flatten()) # Sort SKY in ascending values 
-     
-    skymid = 0.5*sky[(nsky-1)//2] + 0.5*sky[nsky//2]  # Median value of all sky values 
-     
-    cut1 = np.min( np.array([skymid-sky[0],sky[nsky-1] - skymid]) ) 
+
+    sky = np.sort(sky_vector.flatten())  # Sort SKY in ascending values
+
+    # Median value of all sky values
+    skymid = 0.5*sky[(nsky-1)//2] + 0.5*sky[nsky//2]
+
+    cut1 = np.min(np.array([skymid-sky[0], sky[nsky-1] - skymid]))
     if highbad is not None:
         cut1 = np.minimum(cut1, (highbad - skymid))
-    cut2 = skymid + cut1 
-    cut1 = skymid - cut1 
-     
-    # Select the pixels between Cut1 and Cut2 
-    good, = np.where( (sky <= cut2) & (sky >= cut1))
+    cut2 = skymid + cut1
+    cut1 = skymid - cut1
+
+    # Select the pixels between Cut1 and Cut2
+    good, = np.where((sky <= cut2) & (sky >= cut1))
     ngood = len(good)
-    if ( ngood == 0 ): 
-        raise ValueError('ERROR - No sky values fall within ' + str(cut1)+' and ' + str(cut2))
-     
-    delta = sky[good] - skymid   # Subtract median to improve arithmetic accuracy 
+    if (ngood == 0):
+        raise ValueError('ERROR - No sky values fall within ' +
+                         str(cut1)+' and ' + str(cut2))
+
+    # Subtract median to improve arithmetic accuracy
+    delta = sky[good] - skymid
     sm = np.sum(delta)
-    sumsq = np.sum(delta**2) 
-     
-    maximm = np.max(good)  # Highest value accepted at upper end of vector 
+    sumsq = np.sum(delta**2)
+
+    maximm = np.max(good)  # Highest value accepted at upper end of vector
     minimm = np.min(good)
-    minimm = minimm -1   # Highest value reject at lower end of vector 
-     
-    # Compute mean and sigma (from the first pass). 
-    skymed = 0.5*sky[(minimm+maximm+1)//2] + 0.5*sky[(minimm+maximm)//2 + 1]  # median 
-    skymn = float(sm/(maximm-minimm))  # mean 
-    sigma = np.sqrt(sumsq/(maximm-minimm)-skymn**2)  # sigma 
-    skymn = skymn + skymid  # Add median which was subtracted off earlier 
-     
-    # If mean is less than the mode, then the contamination is slight, and the 
-    # mean value is what we really want. 
+    minimm = minimm - 1   # Highest value reject at lower end of vector
+
+    # Compute mean and sigma (from the first pass).
+    skymed = 0.5*sky[(minimm+maximm+1)//2] + 0.5 * \
+        sky[(minimm+maximm)//2 + 1]  # median
+    skymn = float(sm/(maximm-minimm))  # mean
+    sigma = np.sqrt(sumsq/(maximm-minimm)-skymn**2)  # sigma
+    skymn = skymn + skymid  # Add median which was subtracted off earlier
+
+    # If mean is less than the mode, then the contamination is slight, and the
+    # mean value is what we really want.
     if skymed < skymn:
         skymod = 3.*skymed - 2.*skymn
     else:
         skymod = skymn
-     
-    # Rejection and recomputation loop: 
-    niter = 0 
-    clamp = 1 
-    old = 0 
+
+    # Rejection and recomputation loop:
+    niter = 0
+    clamp = 1
+    old = 0
     redo = True
     while (redo):
-        niter += 1 
-        if ( niter > maxiter ): 
+        niter += 1
+        if (niter > maxiter):
             sigma = -1.0
-            skew = 0.0 
-            raise ValueError('ERROR - Too many ('+str(maxiter)+') iterations, unable to compute sky')
-        if ( maximm-minimm < minsky ): # Error?
-            raise ValueError('RROR - Too few ('+str(maximm-minimm)+') valid sky elements, unable to compute sky')
-     
-        # Compute Chauvenet rejection criterion. 
-        r = np.log10( float( maximm-minimm ) ) 
-        r = np.max( [ 2., ( -0.1042*r + 1.1695)*r + 0.8895 ] ) 
-     
-        # Compute rejection limits (symmetric about the current mode). 
-        cut = r*sigma + 0.5*np.abs(skymn-skymod) 
-        if integer : 
-            cut = cut > 1.5 
+            skew = 0.0
+            raise ValueError('ERROR - Too many ('+str(maxiter) +
+                             ') iterations, unable to compute sky')
+        if (maximm-minimm < minsky):  # Error?
+            raise ValueError('RROR - Too few ('+str(maximm-minimm) +
+                             ') valid sky elements, unable to compute sky')
+
+        # Compute Chauvenet rejection criterion.
+        r = np.log10(float(maximm-minimm))
+        r = np.max([2., (-0.1042*r + 1.1695)*r + 0.8895])
+
+        # Compute rejection limits (symmetric about the current mode).
+        cut = r*sigma + 0.5*np.abs(skymn-skymod)
+        if integer:
+            cut = cut > 1.5
         cut1 = skymod - cut
-        cut2 = skymod + cut 
+        cut2 = skymod + cut
 
-        # 
-        # Recompute mean and sigma by adding and/or subtracting sky values 
-        # at both ends of the interval of acceptable values. 
+        #
+        # Recompute mean and sigma by adding and/or subtracting sky values
+        # at both ends of the interval of acceptable values.
         redo = False
-        newmin = minimm 
-        tst_min = (sky[newmin+1] >= cut1)  # Is minimm+1 above current CUT? 
-        done = (newmin == -1) and tst_min  # Are we at first pixel of SKY? 
-        if ~done : 
-            done = (sky[np.maximum(newmin,0)] < cut1) and tst_min 
-        if ~done: 
-            istep = 1 - 2*int(tst_min) 
-            while (done==False):
-                newmin += istep 
-                done = (newmin == -1) or (newmin == nlast) 
-                if ~done : 
-                    done = (sky[newmin] <= cut1) and (sky[newmin+1] >= cut1) 
+        newmin = minimm
+        tst_min = (sky[newmin+1] >= cut1)  # Is minimm+1 above current CUT?
+        done = (newmin == -1) and tst_min  # Are we at first pixel of SKY?
+        if ~done:
+            done = (sky[np.maximum(newmin, 0)] < cut1) and tst_min
+        if ~done:
+            istep = 1 - 2*int(tst_min)
+            while (done == False):
+                newmin += istep
+                done = (newmin == -1) or (newmin == nlast)
+                if ~done:
+                    done = (sky[newmin] <= cut1) and (sky[newmin+1] >= cut1)
 
-            if tst_min: 
-                delta = sky[newmin+1:minimm+1] - skymid 
-            else: 
-                delta = sky[minimm+1:newmin+1] - skymid 
-            sm = sm - istep*np.sum(delta) 
-            sumsq = sumsq - istep*np.sum(delta**2) 
+            if tst_min:
+                delta = sky[newmin+1:minimm+1] - skymid
+            else:
+                delta = sky[minimm+1:newmin+1] - skymid
+            sm = sm - istep*np.sum(delta)
+            sumsq = sumsq - istep*np.sum(delta**2)
             redo = True
-            minimm = newmin 
-        # 
-        newmax = maximm 
-        tst_max = (sky[maximm] <= cut2)       # Is current maximum below upper cut? 
-        done = (maximm == nlast) and tst_max  # Are we at last pixel of SKY array? 
-        if ~done: 
-            done = ( tst_max ) and (sky[np.minimum((maximm+1),nlast)] > cut2) 
-        if ~done:  # Keep incrementing NEWMAX 
-            istep = -1 + 2*int(tst_max)  # Increment up or down? 
-            while (done==False):
-                newmax += istep 
-                done = (newmax == nlast) or (newmax == -1) 
-                if ~done : 
-                    done = ( sky[newmax] <= cut2 ) and ( sky[newmax+1] >= cut2 ) 
-            if tst_max: 
-                delta = sky[maximm+1:newmax+1] - skymid 
-            else: 
-                delta = sky[newmax+1:maximm+1] - skymid 
-            sm = sm + istep*np.sum(delta) 
-            sumsq = sumsq + istep*np.sum(delta**2) 
+            minimm = newmin
+        #
+        newmax = maximm
+        # Is current maximum below upper cut?
+        tst_max = (sky[maximm] <= cut2)
+        # Are we at last pixel of SKY array?
+        done = (maximm == nlast) and tst_max
+        if ~done:
+            done = (tst_max) and (sky[np.minimum((maximm+1), nlast)] > cut2)
+        if ~done:  # Keep incrementing NEWMAX
+            istep = -1 + 2*int(tst_max)  # Increment up or down?
+            while (done == False):
+                newmax += istep
+                done = (newmax == nlast) or (newmax == -1)
+                if ~done:
+                    done = (sky[newmax] <= cut2) and (sky[newmax+1] >= cut2)
+            if tst_max:
+                delta = sky[maximm+1:newmax+1] - skymid
+            else:
+                delta = sky[newmax+1:maximm+1] - skymid
+            sm = sm + istep*np.sum(delta)
+            sumsq = sumsq + istep*np.sum(delta**2)
             redo = True
-            maximm = newmax 
+            maximm = newmax
 
-        # 
-        # Compute mean and sigma (from this pass). 
-        # 
-        nsky = maximm - minimm 
-        if ( nsky < minsky ):   # Error? 
-            raise ValueError('ERROR - Outlier rejection left too few sky elements')
- 
-        skymn = float(sm/nsky) 
-        sigma = float( np.sqrt( np.maximum((sumsq/nsky - skymn**2),0) )) 
-        skymn = skymn + skymid 
- 
-        #  Determine a more robust median by averaging the central 20% of pixels. 
-        #  Estimate the median using the mean of the central 20 percent of sky 
-        #  values.   Be careful to include a perfectly symmetric sample of pixels about 
-        #  the median, whether the total number is even or odd within the acceptance 
-        #  interval 
- 
-        center = (minimm + 1 + maximm)/2. 
-        side = int(np.round(0.2*(maximm-minimm)))/2.  + 0.25 
+        #
+        # Compute mean and sigma (from this pass).
+        #
+        nsky = maximm - minimm
+        if (nsky < minsky):   # Error?
+            raise ValueError(
+                'ERROR - Outlier rejection left too few sky elements')
+
+        skymn = float(sm/nsky)
+        sigma = float(np.sqrt(np.maximum((sumsq/nsky - skymn**2), 0)))
+        skymn = skymn + skymid
+
+        #  Determine a more robust median by averaging the central 20% of pixels.
+        #  Estimate the median using the mean of the central 20 percent of sky
+        #  values.   Be careful to include a perfectly symmetric sample of pixels about
+        #  the median, whether the total number is even or odd within the acceptance
+        #  interval
+
+        center = (minimm + 1 + maximm)/2.
+        side = int(np.round(0.2*(maximm-minimm)))/2. + 0.25
         j = int(np.round(center-side))
         k = int(np.round(center+side))
- 
-        #  In case  the data has a large number of of the same (quantized) 
-        #  intensity, expand the range until both limiting values differ from the 
-        #  central value by at least 0.25 times the read noise. 
- 
+
+        #  In case  the data has a large number of of the same (quantized)
+        #  intensity, expand the range until both limiting values differ from the
+        #  central value by at least 0.25 times the read noise.
+
         if readnoise is not None:
             l = int(np.round(center-0.25))
-            m = int(np.round(center+0.25)) 
-            r = 0.25*readnoise 
-            while ((j > 0) and (k < nsky-1) and ( ((sky[l] - sky[j]) < r) or ((sky[k] - sky[m]) < r))): 
-                j -= 1 
-                k += 1 
-        skymed = np.sum(sky[j:k+1])/(k-j+1) 
-            
-        #  If the mean is less than the median, then the problem of contamination 
-        #  is slight, and the mean is what we really want. 
- 
+            m = int(np.round(center+0.25))
+            r = 0.25*readnoise
+            while ((j > 0) and (k < nsky-1) and (((sky[l] - sky[j]) < r) or ((sky[k] - sky[m]) < r))):
+                j -= 1
+                k += 1
+        skymed = np.sum(sky[j:k+1])/(k-j+1)
+
+        #  If the mean is less than the median, then the problem of contamination
+        #  is slight, and the mean is what we really want.
+
         if skymed < skymn:
-            dmod = 3.*skymed-2.*skymn-skymod 
+            dmod = 3.*skymed-2.*skymn-skymod
         else:
             dmod = skymn - skymod
- 
-        # prevent oscillations by clamping down if sky adjustments are changing sign 
-        if dmod*old < 0: 
-            clamp = 0.5*clamp 
-        skymod += clamp*dmod 
-        old = dmod 
- 
-    # 
-    skew = float( (skymn-skymod)/np.max([1.,sigma]) ) 
-    nsky = maximm - minimm 
- 
+
+        # prevent oscillations by clamping down if sky adjustments are changing sign
+        if dmod*old < 0:
+            clamp = 0.5*clamp
+        skymod += clamp*dmod
+        old = dmod
+
+    #
+    skew = float((skymn-skymod)/np.max([1., sigma]))
+    nsky = maximm - minimm
 
     if debug:
-        print( '% MMM: Number of unrejected sky elements: '+str(nsky)+'    Number of iterations: '+str(niter)) 
-        print( '% MMM: Mode, Sigma, Skew of sky vector:'+str(skymod)+','+str(sigma)+','+str(skew))
- 
+        print('% MMM: Number of unrejected sky elements: ' +
+              str(nsky)+'    Number of iterations: '+str(niter))
+        print('% MMM: Mode, Sigma, Skew of sky vector:' +
+              str(skymod)+','+str(sigma)+','+str(skew))
+
     return skymod, sigma, skew, nsky
- 

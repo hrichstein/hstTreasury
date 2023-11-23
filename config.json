@@ -3,25 +3,25 @@
   "targname" : "HOROLOGIUM-I",
   "filt1" : "606",
   "filt2" : "814",
-  "mainEnv" : "treas",
-  "drizEnv" : "driz",
-  "sfdEnv" : "env_healpy"
+  "main_env" : "/Users/hr8jz/opt/miniconda3",
+  "driz_env" : "/Users/hr8jz/opt/miniconda3/envs/driz",
+  "sfd_env" : "/Users/hr8jz/opt/miniconda3/envs/env_healpy"
 },
 
 "aper" : {
-  "dataDir" : "../../data",
-  "resDir" : "../../results",
+  "data_dir" : "../../data",
+  "res_dir" : "../../results",
   "ee606" : 0.839,
   "ee814" : 0.830,
   "param" : "zeropoints.dat",
-  "fwhm" : 3.5,
+  "fwhm" : 3.0,
   "aperrad" : 0.2,
   "drctol" : 0.5,
   "filtol" : 1.0,
-  "maxtol" : 4.0,
+  "maxtol" : 3.0,
   "suffix" : ".dat",
-  "slice" : 500,
-  "plot" : "False"
+  "slice" : 750,
+  "plotarg" : "False"
 },
 
 "cmd" : {
@@ -34,21 +34,21 @@
 "driz" : {
   "cfg" : "./refFiles/astrodrizzle_new08.cfg",
   "scale" : 0.035,
-  "fpf" : 0.08,
+  "fpf" : 0.8,
   "native" : 0.05
 },
 
 "obs" : {
-  "propID" : "14734",
+  "prop_id" : "14734",
   "instrument" : "ACS/WFC",
-  "expCut" : 200,
+  "exp_cut" : 200,
   "hilim" : 9e4,
   "varpsf" : 2
 },
 
 "script" : {
-  "dataDir" : "../data",
-  "resDir" : "../results",
-  "qualDir" : "../results/qualFigs"
+  "data_dir" : "../data",
+  "res_dir" : "../results",
+  "qual_dir" : "../results/qual_figs"
 }
 }
