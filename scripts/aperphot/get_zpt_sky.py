@@ -31,7 +31,7 @@ def out_zpt_sky(targname, filt, data_dir, res_dir):
         full_name = hdu[0].header['TARGNAME']
 
     im, _ = io.readfile(os.path.join(data_dir,
-                                     f'{targname}_f{filt}w_.fits'))
+                                     f'{targname}_f{filt}w.fits'))
     try:
         _, skysig = sky.getsky(im)
     except ValueError:

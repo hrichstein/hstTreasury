@@ -26,7 +26,7 @@ def run_photutils(targname, filt, zpt, sky, ee_band, data_dir, res_dir,
 
     # with fits.open(os.path.join(data_dir,
     #                             f'{targname}_f{filt}w_nomask.fits')) as hdu:
-        with fits.open(os.path.join(res_dir,
+    with fits.open(os.path.join(res_dir,
                                     f'{targname}_f{filt}w.fits')) as hdu:
         data = hdu[0].data
         exptime = hdu[0].header['EXPTIME']

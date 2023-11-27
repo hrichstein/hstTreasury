@@ -64,7 +64,7 @@ def drc_filt_ref(targname, filt1, filt2, phot_dir, matchtol, slice, suffix='.dat
             print(f'Need more stars, pixel tolerance at {matchtol:.1f}')
             p_in = Table(prime_in, copy=True)
             matchtol += 0.5
-            if matchtol >= 7:
+            if matchtol >= 5:
                 nF_out = False
                 print(f'Not enough matches with tolerance at {matchtol:.1f}.')
                 print('Look for other issues.')

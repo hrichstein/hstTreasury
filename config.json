@@ -17,8 +17,8 @@
   "fwhm" : 3.0,
   "aperrad" : 0.2,
   "drctol" : 0.5,
-  "filtol" : 1.0,
-  "maxtol" : 3.0,
+  "filtol" : 0.5,
+  "maxtol" : 2.0,
   "suffix" : ".dat",
   "slice" : 750,
   "plotarg" : "False"
